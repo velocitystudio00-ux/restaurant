@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember & Spice — Modern Indian & Continental Fine Dining</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              goldLight: '#F3E5AB',
+              dark: '#0D0D0D',
+              surface: '#171717',
+              card: '#212121',
+              accent: '#E65100',
+              muted: '#A3A3A3'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0D0D0D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #262626;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+    .glass-nav {
+      background: rgba(13, 13, 13, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .glass-card {
+      background: rgba(23, 23, 23, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFF 0%, #D4AF37 50%, #AA7C11 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-border-glow:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-brand-dark text-neutral-200 font-sans antialiased selection:bg-brand-gold selection:text-black min-h-screen flex flex-col justify-between">
+
+  <!-- ========================================== -->
+  <!-- 0. CENTRALIZED CONFIGURATION & DEMO NOTICE  -->
+  <!-- ========================================== -->
+  
+  <!-- Subtle Top Demo Notice -->
+  <div class="bg-neutral-900 border-b border-neutral-800 py-1.5 px-4 text-center text-xs text-brand-muted relative z-50">
+    <p>
+      <span class="inline-block w-2 h-2 rounded-full bg-brand-gold animate-pulse mr-1.5"></span>
+      <strong class="text-neutral-200 uppercase tracking-wider font-semibold">Demo Website</strong> — Branding, menu, images, pricing & info can be customized.
+    </p>
+  </div>
+
+  <script>
+    /===================================================================
+     * CENTRAL RESTAURANT CONFIGURATION & DATA SOURCE
+     * Edit this single object to instantly rebrand the entire website.
+     ==================================================================*/
+    const RESTAURANT_CONFIG = {
+      name: "Ember & Spice",
+      tagline: "Bold Flavours. Unforgettable Moments.",
+      cuisine: "Modern Indian & Continental",
+      phone: "+91 98765 43210",
+      email: "hello@emberandspice.example",
+      address: "Ground Floor, Platinum Towers, Bandra West, Mumbai, Maharashtra 400050",
+      hours: {
+        weekdays: "12:00 PM – 11:00 PM",
+        weekends: "12:00 PM – 11:30 PM",
+        status: "Open Today: 12:00 PM – 11:00 PM"
+      },
+      hero: {
+        title: "Where Every Dish Tells a Story",
+        subtitle: "Experience handcrafted dishes, bold flavours and unforgettable dining in the heart of Mumbai.",
+        bgImage: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80"
+      },
+      socials: {
+        instagram: "#",
+        facebook: "#",
+        tripadvisor: "#"
+      },
+      categories: [
+        { id: 'all', name: 'All Dishes' },
+        { id: 'starters', name: 'Starters' },
+        { id: 'soups-salads', name: 'Soups & Salads' },
+        { id: 'mains', name: 'Main Course' },
+        { id: 'indian-specials', name: 'Indian Specials' },
+        { id: 'continental', name: 'Continental' },
+        { id: 'desserts', name: 'Desserts' },
+        { id: 'beverages', name: 'Beverages' }
+      ],
+      menuItems: [
+        {
+          id: 101,
+          name: "Trishul Tandoori Broccoli",
+          category: "starters",
+          price: 495,
+          isVeg: true,
+          isChefSpecial: true,
+          image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
+          description: "Charcoal-grilled broccoli florets marinated in cream cheese, yellow chili, and cardamoms.",
+          ingredients: ["Broccoli", "Amul Cream", "Malai Processed Cheese", "Yellow Chili", "Cardamom Powder"],
+          allergens: ["Dairy"]
+        },
+        {
+          id: 102,
+          name: "Smoked Mutton Galouti",
+          category: "starters",
+          price: 675,
+          isVeg: false,
+          isChefSpecial: false,
+          image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+          description: "Melt-in-mouth minced lamb patties infused with 32 royal spices, served on mini saffron parathas.",
+          ingredients: ["Minced Mutton", "Potli Masala", "Ghee", "Rose Water", "Saffron Bread"],
+          allergens: ["Gluten", "Dairy"]
+        },
+        {
+          id: 103,
+          name: "Charred Truffle Mushroom Soup",
+          category: "soups-salads",
+          price: 395,
+          isVeg: true,
+          isChefSpecial: false,
+          image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+          description: "Velvety wild mushroom soup drizzled with black truffle oil and toasted garlic crostini.",
+          ingredients: ["Button Mushroom", "Porcini", "Truffle Oil", "Cream", "Garlic Bread"],
+          allergens: ["Dairy", "Gluten"]
+        },
+        {
+          id: 104,
+          name: "Chef's Signature Butter Chicken",
+          category: "indian-specials",
+          price: 695,
+          isVeg: false,
+          isChefSpecial: true,
+          image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=800&q=80",
+          description: "Tandoori chicken pulled and slow-cooked in a silky, charcoal-infused rich tomato and cashew gravy.",
+          ingredients: ["Chicken Thighs", "Sun-ripened Tomatoes", "Cashew Paste", "Kasuri Methi", "White Butter"],
+          allergens: ["Dairy", "Nuts"]
+        },
+        {
+          id: 105,
+          name: "Dal Modern Ember",
+          category: "indian-specials",
+          price: 525,
+          isVeg: true,
+          isChefSpecial: false,
+          image: "https://images.unsplash.com/photo-1546833998-877b37c2e5c6?auto=format&fit=crop&w=800&q=80",
+          description: "Black lentils simmered overnight for 24 hours on slow embers, enriched with hand-churned butter.",
+          ingredients: ["Urad Dal", "Tomato Puree", "Butter", "Fresh Cream", "Garlic"],
+          allergens: ["Dairy"]
+        },
+        {
+          id: 106,
+          name: "Pan-Seared Norwegian Salmon",
+          category: "continental",
+          price: 1150,
+          isVeg: false,
+          isChefSpecial: true,
+          image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80",
+          description: "Crispy skin salmon served over saffron risotto, wilted spinach, and a lemon butter caper sauce.",
+          ingredients: ["Fresh Salmon", "Arborio Rice", "Saffron", "Baby Spinach", "Capers", "Butter"],
+          allergens: ["Fish", "Dairy"]
+        },
+        {
+          id: 107,
+          name: "Truffle & Wild Mushroom Pasta",
+          category: "continental",
+          price: 645,
+          isVeg: true,
+          isChefSpecial: false,
+          image: "https://images.unsplash.com/photo-1621996346565-e3d5d6281288?auto=format&fit=crop&w=800&q=80",
+          description: "Handcrafted fettuccine tossed with wild forest mushrooms, Parmigiano-Reggiano, and black truffle crema.",
+          ingredients: ["Handmade Fettuccine", "Shiitake", "Cremini Mushrooms", "Parmesan", "Truffle Oil"],
+          allergens: ["Gluten", "Dairy"]
+        },
+        {
+          id: 108,
+          name: "Golden Saffron Rasmalai Cheesecake",
+          category: "desserts",
+          price: 425,
+          isVeg: true,
+          isChefSpecial: true,
+          image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+          description: "Fusion dessert featuring delicate rasmalai set atop a silky baked cardamom cheesecake crust.",
+          ingredients: ["Cream Cheese", "Chenna", "Saffron Milk", "Pistachio", "Cardamom Crumble"],
+          allergens: ["Dairy", "Nuts", "Gluten"]
+        },
+        {
+          id: 109,
+          name: "Old Fashioned Ember Cocktail",
+          category: "beverages",
+          price: 550,
+          isVeg: true,
+          isChefSpecial: false,
+          image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80",
+          description: "Smoked bourbon cocktail infused with clove syrup, orange bitters, and an aromatic rosemary sprig.",
+          ingredients: ["Bourbon", "House Clove Syrup", "Angostura Bitters", "Charred Orange Peel"],
+          allergens: []
+        }
+      ],
+      offers: [
+        {
+          title: "Weekend Feast",
+          badge: "Family Dining",
+          desc: "Enjoy 20% OFF on all group dining reservations above 4 guests on Saturdays and Sundays.",
+          code: "WEEKEND20"
+        },
+        {
+          title: "Date Night Luxury",
+          badge: "Couples Special",
+          desc: "Complimentary handcrafted dessert and two glasses of premium sparkling wine for couples.",
+          code: "ROMANCE"
+        },
+        {
+          title: "Business Express",
+          badge: "Lunch Special",
+          desc: "3-Course gourmet executive lunch menu including Starter, Main, and Beverage at ₹899++.",
+          code: "EXEC899"
+        }
+      ],
+      reviews: [
+        {
+          name: "Rohan Mehta",
+          role: "Food Critic & Blogger",
+          rating: 5,
+          comment: "The Butter Chicken and Tandoori Broccoli are unrivaled in Mumbai. Exceptional ambient lighting and warm hospitality!",
+          image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+        },
+        {
+          name: "Ananya Deshmukh",
+          role: "Verified Guest",
+          rating: 5,
+          comment: "Celebrated our anniversary here. The Saffron Rasmalai Cheesecake was worth every single calorie. Unforgettable evening.",
+          image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80"
+        },
+        {
+          name: "Vikramaditya Roy",
+          role: "Regular Visitor",
+          rating: 5,
+          comment: "The fusion between Modern Indian spices and Continental technique is executed brilliantly. Very smooth online ordering too!",
+          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+        }
+      ],
+      faqs: [
+        {
+          q: "Do you accept advance reservations?",
+          a: "Yes, we strongly recommend reserving your table at least 24 hours in advance for weekends and special holidays."
+        },
+        {
+          q: "Are there extensive vegetarian and vegan options available?",
+          a: "Absolutely! Over 50% of our menu consists of specially crafted vegetarian dishes, clearly indicated by green indicators."
+        },
+        {
+          q: "Do you accommodate dietary allergies and custom spice levels?",
+          a: "Yes, our culinary team caters to gluten-free, nut-free, and custom spice level requirements. Inform your server upon arrival."
+        },
+        {
+          q: "What are your operating hours?",
+          a: "We are open Monday through Sunday from 12:00 PM to 11:00 PM (open until 11:30 PM on Friday & Saturday)."
+        }
+      ],
+      gallery: [
+        { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80", title: "Luxury Dining Ambience" },
+        { url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80", title: "Artisanal Kitchen Crafting" },
+        { url: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80", title: "Signature Plated Dishes" },
+        { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80", title: "Private Dining Tables" },
+        { url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80", title: "Cocktail Bar Experience" },
+        { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80", title: "Outdoor Terrace Seating" }
+      ]
+    };
+  </script>
+
+  <!-- ========================================== -->
+  <!-- 1. STICKY NAVIGATION BAR                   -->
+  <!-- ========================================== -->
+  <header id="main-header" class="sticky top-0 z-40 transition-all duration-300 glass-nav border-b border-neutral-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-gold to-brand-accent flex items-center justify-center text-black font-bold font-serif text-xl shadow-lg shadow-brand-gold/20 group-hover:scale-105 transition-transform">
+          E
+        </div>
+        <div>
+          <span class="font-serif text-xl font-bold tracking-wider text-white block leading-none dynamic-res-name">Ember & Spice</span>
+          <span class="text-[10px] text-brand-gold uppercase tracking-widest dynamic-res-cuisine">Modern Indian</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-neutral-300">
+        <a href="#about" class="hover:text-brand-gold transition-colors">About</a>
+        <a href="#menu" class="hover:text-brand-gold transition-colors">Menu</a>
+        <a href="#signature" class="hover:text-brand-gold transition-colors">Signature</a>
+        <a href="#offers" class="hover:text-brand-gold transition-colors">Offers</a>
+        <a href="#gallery" class="hover:text-brand-gold transition-colors">Gallery</a>
+        <a href="#reviews" class="hover:text-brand-gold transition-colors">Reviews</a>
+        <a href="#contact" class="hover:text-brand-gold transition-colors">Contact</a>
+      </nav>
+
+      <!-- Right Action CTAs -->
+      <div class="flex items-center gap-4">
+        <!-- Cart Drawer Toggle -->
+        <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-full bg-brand-surface hover:bg-neutral-800 text-neutral-200 hover:text-brand-gold border border-neutral-700 transition-all">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="cart-badge-count" class="absolute -top-1 -right-1 bg-brand-gold text-black text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+
+        <!-- Reservation CTA -->
+        <a href="#reserve" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-gold to-yellow-600 text-black font-semibold text-sm hover:brightness-110 shadow-lg shadow-brand-gold/10 transition-all">
+          Reserve Table
+        </a>
+
+        <!-- Mobile Hamburger Button -->
+        <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg bg-brand-surface border border-neutral-700 text-neutral-200">
+          <i id="menu-icon" data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-brand-surface border-b border-neutral-800 px-6 py-6 transition-all">
+      <nav class="flex flex-col gap-4 text-base font-medium">
+        <a href="#about" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">About Us</a>
+        <a href="#menu" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Interactive Menu</a>
+        <a href="#signature" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Chef's Signature</a>
+        <a href="#offers" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Special Offers</a>
+        <a href="#gallery" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Photo Gallery</a>
+        <a href="#reviews" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Guest Reviews</a>
+        <a href="#contact" onclick="toggleMobileMenu()" class="text-neutral-300 hover:text-brand-gold py-1">Location & Contact</a>
+        <a href="#reserve" onclick="toggleMobileMenu()" class="mt-2 text-center w-full py-3 rounded-xl bg-brand-gold text-black font-bold">Reserve a Table Now</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+
+    <!-- ========================================== -->
+    <!-- 2. HERO SECTION                            -->
+    <!-- ========================================== -->
+    <section class="relative min-h-[calc(100vh-5rem)] flex items-center justify-center bg-black overflow-hidden py-20">
+      <!-- Background Image with Dark Vignette -->
+      <div class="absolute inset-0 z-0">
+        <img id="hero-bg-img" src="" alt="Hero background" class="w-full h-full object-cover object-center opacity-40 scale-105 transition-transform duration-10000">
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-radial-vignette"></div>
+      </div>
+
+      <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        <!-- Subtitle Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-gold/30 bg-brand-gold/10 text-brand-gold text-xs sm:text-sm font-medium tracking-wide uppercase mb-6 backdrop-blur-md">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span class="dynamic-res-tagline">Bold Flavours. Unforgettable Moments.</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 id="hero-title" class="text-4xl sm:text-6xl md:text-7xl font-serif font-bold text-white tracking-tight mb-6 leading-tight">
+          Where Every Dish Tells a Story
+        </h1>
+
+        <p id="hero-subtitle" class="text-base sm:text-xl text-neutral-300 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+          Experience handcrafted dishes, bold flavours and unforgettable dining in the heart of Mumbai.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12">
+          <a href="#reserve" class="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-gold hover:bg-yellow-500 text-black font-bold text-base shadow-xl shadow-brand-gold/20 hover:scale-105 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+            Reserve a Table
+          </a>
+          <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-full bg-neutral-900/80 hover:bg-neutral-800 text-white font-semibold text-base border border-neutral-700 hover:border-brand-gold transition-all flex items-center justify-center gap-2 backdrop-blur-sm">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+            Explore Menu
+          </a>
+        </div>
+
+        <!-- Status Info Bar -->
+        <div class="inline-flex items-center gap-6 px-6 py-3 rounded-2xl bg-neutral-900/80 border border-neutral-800 text-xs sm:text-sm text-neutral-400 backdrop-blur-sm">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="text-neutral-200 font-medium dynamic-res-status">Open Today</span>
+          </div>
+          <span class="text-neutral-600">|</span>
+          <div class="flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-brand-gold"></i>
+            <span class="dynamic-res-hours">12:00 PM – 11:00 PM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. ABOUT THE RESTAURANT                    -->
+    <!-- ========================================== -->
+    <section id="about" class="py-24 bg-brand-dark border-t border-neutral-900 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          
+          <!-- Column 1: Image Grid -->
+          <div class="relative">
+            <div class="aspect-4/3 rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1000&q=80" alt="Restaurant Interior" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -bottom-8 -right-6 hidden sm:block w-2/3 aspect-4/3 rounded-2xl overflow-hidden border-2 border-brand-gold/40 shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80" alt="Chef Preparing Food" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -top-6 -left-6 bg-brand-surface border border-neutral-800 p-4 rounded-xl shadow-xl hidden sm:flex items-center gap-3">
+              <div class="p-3 rounded-lg bg-brand-gold/10 text-brand-gold">
+                <i data-lucide="award" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white">Award Winning</p>
+                <p class="text-xs text-neutral-400">Culinary Excellence 2024</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Text Story -->
+          <div>
+            <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Our Culinary Heritage</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white mb-6">Crafting Culinary Memories Through Charcoal & Passion</h2>
+            <p class="text-neutral-300 font-light leading-relaxed mb-6">
+              At <strong class="text-white dynamic-res-name">Ember & Spice</strong>, we believe dining is an art form. Founded in the heart of Mumbai, our kitchen fuses age-old Indian charcoal-tandoor traditions with modern Continental precision.
+            </p>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div class="p-4 rounded-xl bg-brand-surface border border-neutral-800">
+                <i data-lucide="flame" class="w-6 h-6 text-brand-gold mb-2"></i>
+                <h4 class="font-semibold text-white text-sm mb-1">Authentic Embers</h4>
+                <p class="text-xs text-neutral-400">Charcoal slow-cooking for rich, smoky depth.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-brand-surface border border-neutral-800">
+                <i data-lucide="leaf" class="w-6 h-6 text-brand-gold mb-2"></i>
+                <h4 class="font-semibold text-white text-sm mb-1">Farm-Fresh</h4>
+                <p class="text-xs text-neutral-400">100% organic, locally sourced produce daily.</p>
+              </div>
+            </div>
+
+            <button onclick="openStoryModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-brand-gold/40 text-brand-gold hover:bg-brand-gold hover:text-black font-semibold text-sm transition-all">
+              <span>Discover Our Full Story</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Story Expandable Modal -->
+    <div id="story-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="bg-brand-surface border border-neutral-800 max-w-2xl w-full rounded-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeStoryModal()" class="absolute top-4 right-4 p-2 text-neutral-400 hover:text-white">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Behind the Scenes</span>
+        <h3 class="text-2xl font-serif font-bold text-white mb-4">Our Kitchen Philosophy</h3>
+        <div class="space-y-4 text-sm text-neutral-300 leading-relaxed font-light">
+          <p>Every ingredient used at Ember & Spice undergoes rigorous selection. Our Head Chef brings over 18 years of international culinary experience, blending centuries-old Indian royal recipes with French cooking techniques.</p>
+          <p>We believe in sustainability, zero food waste, and supporting local farmers across Maharashtra. Every sauce is simmered from scratch, and every bread is hand-stretched to order.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4 & 5. INTERACTIVE MENU SECTION & SEARCH   -->
+    <!-- ========================================== -->
+    <section id="menu" class="py-24 bg-brand-surface border-t border-neutral-900 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Gastronomic Selection</span>
+          <h2 class="text-3xl sm:text-5xl font-serif font-bold text-white mb-4">Explore Our Interactive Menu</h2>
+          <p class="text-neutral-400 text-sm sm:text-base font-light">Filter by category or search your favorite dishes in real-time.</p>
+        </div>
+
+        <!-- Menu Search Bar -->
+        <div class="max-w-md mx-auto mb-10 relative">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+          <input type="text" id="menu-search-input" oninput="handleMenuSearch()" placeholder="Search dishes by name, ingredient, category..." 
+                 class="w-full bg-brand-dark border border-neutral-700 rounded-full py-3.5 pl-12 pr-4 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-brand-gold transition-all">
+        </div>
+
+        <!-- Category Tabs -->
+        <div id="category-tabs" class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-none">
+          <!-- Dynamically Injected -->
+        </div>
+
+        <!-- Menu Grid Container -->
+        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically Rendered Menu Cards -->
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="menu-no-results" class="hidden text-center py-16">
+          <i data-lucide="utensils-crossed" class="w-12 h-12 text-neutral-600 mx-auto mb-3"></i>
+          <h3 class="text-lg font-semibold text-white mb-1">No dishes found</h3>
+          <p class="text-xs text-neutral-400">Try searching for another ingredient or reset your filter.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Item Details Modal -->
+    <div id="item-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="bg-brand-surface border border-neutral-800 max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <button onclick="closeItemModal()" class="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-black">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="h-64 relative">
+          <img id="modal-item-image" src="" alt="" class="w-full h-full object-cover">
+          <div class="absolute bottom-3 left-3 flex gap-2" id="modal-badges"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h3 id="modal-item-name" class="text-xl font-serif font-bold text-white"></h3>
+            <span id="modal-item-price" class="text-lg font-bold text-brand-gold"></span>
+          </div>
+          <p id="modal-item-desc" class="text-sm text-neutral-300 mb-4 font-light"></p>
+          
+          <div class="mb-4">
+            <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Key Ingredients</h4>
+            <div id="modal-item-ingredients" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div class="mb-6">
+            <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">Allergens</h4>
+            <p id="modal-item-allergens" class="text-xs text-neutral-400 italic"></p>
+          </div>
+
+          <!-- Quantity Selector & Add CTA -->
+          <div class="flex items-center gap-4">
+            <div class="flex items-center border border-neutral-700 rounded-lg bg-brand-dark">
+              <button onclick="updateModalQty(-1)" class="px-3 py-2 text-neutral-300 hover:text-white">-</button>
+              <span id="modal-item-qty" class="px-3 text-sm font-bold text-white">1</span>
+              <button onclick="updateModalQty(1)" class="px-3 py-2 text-neutral-300 hover:text-white">+</button>
+            </div>
+            <button id="modal-add-btn" class="flex-1 py-3 bg-brand-gold hover:bg-yellow-500 text-black font-bold text-sm rounded-lg transition-all flex items-center justify-center gap-2">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add to Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 8. CHEF'S SPECIAL SECTION                  -->
+    <!-- ========================================== -->
+    <section id="signature" class="py-24 bg-brand-dark border-t border-neutral-900 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-r from-neutral-900 via-brand-surface to-neutral-900 border border-brand-gold/30 rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-bold uppercase tracking-wider mb-4">Chef's Masterpiece</span>
+              <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white mb-4">Chef's Signature Butter Chicken</h2>
+              <p class="text-neutral-300 text-sm sm:text-base font-light mb-6 leading-relaxed">
+                Tender chicken morsels marinating for 18 hours in artisanal hung curd and royal mace, chargrilled over burning embers, then finished in a velvet tomato gravy enriched with white butter and cashew paste.
+              </p>
+              <div class="flex items-center gap-4 mb-8">
+                <span class="text-3xl font-bold text-brand-gold">₹695</span>
+                <span class="text-xs text-neutral-400 uppercase tracking-widest border-l border-neutral-700 pl-4">Serves 1-2 Guests</span>
+              </div>
+              <button onclick="quickAddCart(104)" class="px-8 py-3.5 rounded-full bg-brand-gold hover:bg-yellow-500 text-black font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Chef Special to Order
+              </button>
+            </div>
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=800&q=80" alt="Signature Butter Chicken" class="w-full h-80 sm:h-96 object-cover rounded-2xl shadow-2xl border border-neutral-800">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 9. SPECIAL OFFERS                          -->
+    <!-- ========================================== -->
+    <section id="offers" class="py-24 bg-brand-surface border-t border-neutral-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-12">
+          <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Exclusive Deals</span>
+          <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white">Curated Special Offers</h2>
+        </div>
+        <div id="offers-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. RESERVATION SYSTEM                     -->
+    <!-- ========================================== -->
+    <section id="reserve" class="py-24 bg-brand-dark border-t border-neutral-900 relative">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-3xl p-8 sm:p-12 shadow-2xl relative">
+          <div class="text-center mb-10">
+            <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Book Your Experience</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white mb-2">Reserve a Table</h2>
+            <p class="text-neutral-400 text-sm font-light">Instant demo confirmation. Reservations recommended for dinner service.</p>
+          </div>
+
+          <form id="reservation-form" onsubmit="handleReservationSubmit(event)" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Full Name</label>
+                <input type="text" required placeholder="e.g. Rahul Sharma" class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Phone Number</label>
+                <input type="tel" required placeholder="+91 98765 00000" class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Date</label>
+                <input type="date" required class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Time</label>
+                <select required class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold">
+                  <option value="12:30 PM">12:30 PM</option>
+                  <option value="01:30 PM">01:30 PM</option>
+                  <option value="07:30 PM">07:30 PM</option>
+                  <option value="08:30 PM">08:30 PM</option>
+                  <option value="09:30 PM">09:30 PM</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Guests</label>
+                <select required class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold">
+                  <option value="2">2 Guests</option>
+                  <option value="4">4 Guests</option>
+                  <option value="6">6 Guests</option>
+                  <option value="8+">8+ Large Group</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-neutral-300 uppercase mb-2">Special Request (Optional)</label>
+              <textarea rows="2" placeholder="Anniversary seating, candle decoration, allergen alerts..." class="w-full bg-brand-dark border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-gold to-yellow-600 text-black font-bold text-base hover:brightness-110 shadow-xl transition-all">
+              Confirm Reservation Request
+            </button>
+          </form>
+
+          <!-- Reservation Confirmation Banner -->
+          <div id="reservation-success" class="hidden text-center py-8">
+            <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="check-circle" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-serif font-bold text-white mb-2">Reservation Request Received!</h3>
+            <p class="text-neutral-300 text-sm max-w-md mx-auto mb-6">
+              Thank you for reserving with <span class="dynamic-res-name">Ember & Spice</span>. This is a demo submission—no actual booking was recorded.
+            </p>
+            <button onclick="resetReservationForm()" class="px-6 py-2.5 rounded-full border border-neutral-700 text-sm text-neutral-300 hover:text-white">
+              Make Another Reservation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 10. GALLERY WITH LIGHTBOX                  -->
+    <!-- ========================================== -->
+    <section id="gallery" class="py-24 bg-brand-surface border-t border-neutral-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-12">
+          <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Visual Atmosphere</span>
+          <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white">Our Gallery</h2>
+        </div>
+
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 hidden">
+      <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white hover:text-brand-gold">
+        <i data-lucide="x" class="w-8 h-8"></i>
+      </button>
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[85vh] rounded-xl object-contain">
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 11. REVIEWS CAROUSEL                       -->
+    <!-- ========================================== -->
+    <section id="reviews" class="py-24 bg-brand-dark border-t border-neutral-900">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Guest Testimonials</span>
+        <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white mb-12">What Dining Critics Say</h2>
+
+        <div class="relative bg-brand-surface border border-neutral-800 rounded-3xl p-8 sm:p-12 shadow-xl min-h-[250px] flex items-center justify-center">
+          <div id="review-card" class="transition-opacity duration-300">
+            <!-- Review Content Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <div class="flex items-center justify-center gap-4 mt-6">
+          <button onclick="prevReview()" class="p-3 rounded-full bg-brand-surface border border-neutral-800 text-neutral-300 hover:text-brand-gold">
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+          </button>
+          <button onclick="nextReview()" class="p-3 rounded-full bg-brand-surface border border-neutral-800 text-neutral-300 hover:text-brand-gold">
+            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 12. WHY CHOOSE US                          -->
+    <!-- ========================================== -->
+    <section class="py-20 bg-brand-surface border-t border-neutral-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="p-6 rounded-2xl bg-brand-dark border border-neutral-800 text-center">
+            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="leaf" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">Fresh Ingredients</h4>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed">Locally sourced organic produce delivered every morning.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-brand-dark border border-neutral-800 text-center">
+            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="chef-hat" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">Expert Chefs</h4>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed">Passionate culinary masters with international experience.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-brand-dark border border-neutral-800 text-center">
+            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="sparkles" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">Warm Atmosphere</h4>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed">A luxury space designed specifically for memorable moments.</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-brand-dark border border-neutral-800 text-center">
+            <div class="w-12 h-12 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="clock" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-lg font-bold text-white mb-2">Thoughtful Service</h4>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed">Prompt and attentive dining hospitality without compromise.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 13. FAQ ACCORDION                          -->
+    <!-- ========================================== -->
+    <section class="py-24 bg-brand-dark border-t border-neutral-900">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Help & Details</span>
+          <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white">Frequently Asked Questions</h2>
+        </div>
+        <div id="faq-accordion" class="space-y-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 14. LOCATION & CONTACT                     -->
+    <!-- ========================================== -->
+    <section id="contact" class="py-24 bg-brand-surface border-t border-neutral-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Contact Info -->
+          <div>
+            <span class="text-brand-gold text-xs font-bold uppercase tracking-widest block mb-2">Visit Us</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white mb-8">Location & Contact</h2>
+
+            <div class="space-y-6 text-sm">
+              <div class="flex items-start gap-4">
+                <div class="p-3 rounded-lg bg-brand-dark border border-neutral-800 text-brand-gold">
+                  <i data-lucide="map-pin" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Address</h4>
+                  <p class="text-neutral-400 font-light dynamic-res-address">Bandra West, Mumbai, Maharashtra</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="p-3 rounded-lg bg-brand-dark border border-neutral-800 text-brand-gold">
+                  <i data-lucide="phone" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Direct Calling</h4>
+                  <p class="text-neutral-400 font-light dynamic-res-phone">+91 98765 43210</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="p-3 rounded-lg bg-brand-dark border border-neutral-800 text-brand-gold">
+                  <i data-lucide="mail" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Email Reservations</h4>
+                  <p class="text-neutral-400 font-light dynamic-res-email">hello@emberandspice.example</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Call & WhatsApp Action Buttons -->
+            <div class="flex flex-wrap gap-4 mt-8">
+              <a id="whatsapp-btn" href="#" target="_blank" class="px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm flex items-center gap-2">
+                <i data-lucide="message-square" class="w-4 h-4"></i> WhatsApp Reservation
+              </a>
+              <a id="phone-btn" href="#" class="px-6 py-3 rounded-full bg-brand-dark border border-neutral-700 hover:border-brand-gold text-white font-semibold text-sm flex items-center gap-2">
+                <i data-lucide="phone-call" class="w-4 h-4"></i> Direct Call
+              </a>
+            </div>
+          </div>
+
+          <!-- Interactive Map Placeholder -->
+          <div class="rounded-3xl bg-brand-dark border border-neutral-800 overflow-hidden h-80 lg:h-auto flex flex-col items-center justify-center p-8 text-center relative">
+            <i data-lucide="map" class="w-12 h-12 text-brand-gold/40 mb-3"></i>
+            <h4 class="text-lg font-bold text-white mb-1">Interactive Location Map</h4>
+            <p class="text-xs text-neutral-400 mb-6">Platinum Towers, Bandra West, Mumbai</p>
+            <button onclick="alert('Demo Action: Directs user to Google Maps directions.')" class="px-6 py-2.5 rounded-full bg-brand-surface border border-neutral-700 text-xs font-bold text-white hover:border-brand-gold">
+              Get Directions
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 6. CART DRAWER & CHECKOUT SYSTEM           -->
+  <!-- ========================================== -->
+  <div id="cart-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-brand-surface border-l border-neutral-800 shadow-2xl translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- Header -->
+    <div class="p-6 border-b border-neutral-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
+        <h3 class="text-lg font-bold text-white">Your Order</h3>
+      </div>
+      <button onclick="toggleCartDrawer()" class="text-neutral-400 hover:text-white">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- Order Items List -->
+    <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4">
+      <!-- Items dynamically populated -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="cart-empty" class="hidden flex-grow flex flex-col items-center justify-center p-6 text-center">
+      <i data-lucide="shopping-cart" class="w-12 h-12 text-neutral-600 mb-3"></i>
+      <p class="text-base font-semibold text-white mb-1">Your order bag is empty</p>
+      <p class="text-xs text-neutral-400 mb-6">Explore our menu and add your favorite dishes.</p>
+      <button onclick="toggleCartDrawer()" class="px-6 py-2.5 rounded-full bg-brand-gold text-black font-bold text-xs">Browse Menu</button>
+    </div>
+
+    <!-- Summary & Checkout Footer -->
+    <div id="cart-footer" class="p-6 border-t border-neutral-800 bg-brand-dark">
+      <div class="space-y-2 text-xs text-neutral-400 mb-4">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span id="cart-subtotal" class="text-white font-medium">₹0</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Taxes & Service Charge (10%)</span>
+          <span id="cart-tax" class="text-white font-medium">₹0</span>
+        </div>
+        <div class="flex justify-between text-sm text-white font-bold border-t border-neutral-800 pt-2">
+          <span>Total Payable</span>
+          <span id="cart-total" class="text-brand-gold">₹0</span>
+        </div>
+      </div>
+
+      <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-brand-gold hover:bg-yellow-500 text-black font-bold text-sm transition-all flex items-center justify-center gap-2">
+        <span>Proceed to Demo Checkout</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Checkout Demo Modal -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-brand-surface border border-neutral-800 max-w-md w-full rounded-2xl p-6 relative">
+      <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="checkout-form-wrapper">
+        <h3 class="text-xl font-serif font-bold text-white mb-1">Complete Demo Order</h3>
+        <p class="text-xs text-neutral-400 mb-6">This is a simulated order. No real charges apply.</p>
+
+        <form onsubmit="handleDemoCheckoutSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-neutral-300 mb-1">Full Name</label>
+            <input type="text" required placeholder="John Doe" class="w-full bg-brand-dark border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-neutral-300 mb-1">Phone Number</label>
+            <input type="tel" required placeholder="+91 98765 43210" class="w-full bg-brand-dark border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-neutral-300 mb-1">Order Type</label>
+              <select class="w-full bg-brand-dark border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white">
+                <option>Dine-In</option>
+                <option>Takeaway</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-neutral-300 mb-1">Preferred Time</label>
+              <input type="time" required class="w-full bg-brand-dark border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white">
+            </div>
+          </div>
+          <button type="submit" class="w-full py-3 mt-4 rounded-xl bg-brand-gold text-black font-bold text-sm">Place Demo Order</button>
+        </form>
+      </div>
+
+      <!-- Checkout Confirmation -->
+      <div id="checkout-success" class="hidden text-center py-6">
+        <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="check" class="w-6 h-6"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-1">Demo Order Received!</h4>
+        <p class="text-xs text-neutral-400 mb-4">Your order has been simulated successfully.</p>
+        <button onclick="closeCheckoutModal()" class="px-6 py-2 rounded-full bg-neutral-800 text-white text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ========================================== -->
+  <!-- 15. FOOTER SECTION                         -->
+  <!-- ========================================== -->
+  <footer class="bg-brand-dark border-t border-neutral-900 pt-16 pb-12 text-neutral-400 text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        
+        <!-- Brand Info -->
+        <div class="md:col-span-1">
+          <a href="#" class="flex items-center gap-2 mb-4">
+            <span class="font-serif text-2xl font-bold text-white dynamic-res-name">Ember & Spice</span>
+          </a>
+          <p class="text-xs text-neutral-400 font-light leading-relaxed mb-4 dynamic-res-tagline">
+            Bold Flavours. Unforgettable Moments.
+          </p>
+          <div class="flex gap-3">
+            <a href="#" class="p-2 rounded-full bg-brand-surface text-neutral-400 hover:text-brand-gold"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+            <a href="#" class="p-2 rounded-full bg-brand-surface text-neutral-400 hover:text-brand-gold"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#about" class="hover:text-brand-gold">About Us</a></li>
+            <li><a href="#menu" class="hover:text-brand-gold">Full Menu</a></li>
+            <li><a href="#reserve" class="hover:text-brand-gold">Reserve Table</a></li>
+            <li><a href="#offers" class="hover:text-brand-gold">Special Offers</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Cuisine</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#menu" class="hover:text-brand-gold">Modern Indian Specials</a></li>
+            <li><a href="#menu" class="hover:text-brand-gold">Continental Entrées</a></li>
+            <li><a href="#menu" class="hover:text-brand-gold">Charcoal Starters</a></li>
+            <li><a href="#menu" class="hover:text-brand-gold">Artisanal Desserts</a></li>
+          </ul>
+        </div>
+
+        <!-- Hours -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Operating Hours</h4>
+          <p class="text-xs text-neutral-400 mb-1">Mon - Thu: 12:00 PM – 11:00 PM</p>
+          <p class="text-xs text-neutral-400 mb-4">Fri - Sun: 12:00 PM – 11:30 PM</p>
+          <p class="text-xs text-brand-gold font-semibold dynamic-res-phone">+91 98765 43210</p>
+        </div>
+
+      </div>
+
+      <div class="border-t border-neutral-900 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500">
+        <p>© <span id="year-span"></span> <span class="dynamic-res-name">Ember & Spice</span>. All rights reserved. Portfolio Demo Website.</p>
+        <p class="mt-2 sm:mt-0">Designed for Client Presentations</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Floating Button -->
+  <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-6 left-6 z-40 p-3 rounded-full bg-brand-surface border border-neutral-800 text-neutral-400 hover:text-brand-gold transition-all shadow-xl">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT REUSABLE LOGIC ENGINE           -->
+  <!-- ========================================== -->
+  <script>
+    // Global App State
+    let cart = [];
+    let selectedCategory = 'all';
+    let searchQuery = '';
+    let currentReviewIndex = 0;
+    let modalActiveItemId = null;
+    let modalActiveQty = 1;
+
+    // Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeDynamicContent();
+      renderMenuCategories();
+      renderMenuItems();
+      renderOffers();
+      renderGallery();
+      renderReview();
+      renderFAQs();
+      updateYear();
+      lucide.createIcons();
+    });
+
+    // 1. DYNAMIC CONTENT INJECTION FROM CONFIG SOURCE
+    function initializeDynamicContent() {
+      document.querySelectorAll('.dynamic-res-name').forEach(el => el.textContent = RESTAURANT_CONFIG.name);
+      document.querySelectorAll('.dynamic-res-tagline').forEach(el => el.textContent = RESTAURANT_CONFIG.tagline);
+      document.querySelectorAll('.dynamic-res-cuisine').forEach(el => el.textContent = RESTAURANT_CONFIG.cuisine);
+      document.querySelectorAll('.dynamic-res-phone').forEach(el => el.textContent = RESTAURANT_CONFIG.phone);
+      document.querySelectorAll('.dynamic-res-email').forEach(el => el.textContent = RESTAURANT_CONFIG.email);
+      document.querySelectorAll('.dynamic-res-address').forEach(el => el.textContent = RESTAURANT_CONFIG.address);
+      document.querySelectorAll('.dynamic-res-hours').forEach(el => el.textContent = RESTAURANT_CONFIG.hours.weekdays);
+      document.querySelectorAll('.dynamic-res-status').forEach(el => el.textContent = RESTAURANT_CONFIG.hours.status);
+
+      document.getElementById('hero-bg-img').src = RESTAURANT_CONFIG.hero.bgImage;
+      document.getElementById('hero-title').textContent = RESTAURANT_CONFIG.hero.title;
+      document.getElementById('hero-subtitle').textContent = RESTAURANT_CONFIG.hero.subtitle;
+
+      // Contact Buttons Dynamic Links
+      document.getElementById('whatsapp-btn').href = `https://wa.me/${RESTAURANT_CONFIG.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(RESTAURANT_CONFIG.name)},%20I%20would%20like%20to%20reserve%20a%20table.`;
+      document.getElementById('phone-btn').href = `tel:${RESTAURANT_CONFIG.phone}`;
+    }
+
+    // 2. INTERACTIVE MENU LOGIC
+    function renderMenuCategories() {
+      const container = document.getElementById('category-tabs');
+      container.innerHTML = RESTAURANT_CONFIG.categories.map(cat => `
+        <button onclick="selectCategory('${cat.id}')" class="px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+          selectedCategory === cat.id 
+            ? 'bg-brand-gold text-black shadow-lg shadow-brand-gold/20' 
+            : 'bg-brand-dark text-neutral-400 hover:text-white border border-neutral-800'
+        }">
+          ${cat.name}
+        </button>
+      `).join('');
+    }
+
+    function selectCategory(catId) {
+      selectedCategory = catId;
+      renderMenuCategories();
+      renderMenuItems();
+    }
+
+    function handleMenuSearch() {
+      searchQuery = document.getElementById('menu-search-input').value.toLowerCase().trim();
+      renderMenuItems();
+    }
+
+    function renderMenuItems() {
+      const grid = document.getElementById('menu-grid');
+      const noResults = document.getElementById('menu-no-results');
+
+      const filtered = RESTAURANT_CONFIG.menuItems.filter(item => {
+        const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery) || 
+                              item.description.toLowerCase().includes(searchQuery) ||
+                              item.category.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noResults.classList.remove('hidden');
+        return;
+      }
+
+      noResults.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => `
+        <div class="bg-brand-dark border border-neutral-800 hover:border-brand-gold/40 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between">
+          <div>
+            <div class="h-48 relative overflow-hidden cursor-pointer" onclick="openItemModal(${item.id})">
+              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute top-3 left-3 flex gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.isVeg ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/30' : 'bg-red-950/80 text-red-400 border border-red-500/30'}">
+                  ${item.isVeg ? 'VEG' : 'NON-VEG'}
+                </span>
+                ${item.isChefSpecial ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-brand-gold/90 text-black">Chef Special</span>' : ''}
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-2">
+                <h3 onclick="openItemModal(${item.id})" class="text-base font-serif font-bold text-white hover:text-brand-gold cursor-pointer transition-colors">${item.name}</h3>
+                <span class="text-base font-bold text-brand-gold">₹${item.price}</span>
+              </div>
+              <p class="text-xs text-neutral-400 font-light line-clamp-2 mb-4">${item.description}</p>
+            </div>
+          </div>
+          <div class="px-5 pb-5">
+            <button onclick="quickAddCart(${item.id})" class="w-full py-2.5 rounded-xl bg-brand-surface border border-neutral-700 hover:border-brand-gold text-neutral-200 hover:text-brand-gold font-semibold text-xs transition-all flex items-center justify-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add to Order
+            </button>
+          </div>
+        </div>
+      `).join('');
+      
+      lucide.createIcons();
+    }
+
+    // Modal Details Logic
+    function openItemModal(itemId) {
+      const item = RESTAURANT_CONFIG.menuItems.find(i => i.id === itemId);
+      if(!item) return;
+
+      modalActiveItemId = itemId;
+      modalActiveQty = 1;
+
+      document.getElementById('modal-item-image').src = item.image;
+      document.getElementById('modal-item-name').textContent = item.name;
+      document.getElementById('modal-item-price').textContent = `₹${item.price}`;
+      document.getElementById('modal-item-desc').textContent = item.description;
+      document.getElementById('modal-item-qty').textContent = '1';
+
+      // Badges
+      const badgeContainer = document.getElementById('modal-badges');
+      badgeContainer.innerHTML = `
+        <span class="px-2.5 py-1 rounded text-xs font-bold uppercase ${item.isVeg ? 'bg-emerald-950 text-emerald-400 border border-emerald-500' : 'bg-red-950 text-red-400 border border-red-500'}">
+          ${item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}
+        </span>
+      `;
+
+      // Ingredients
+      document.getElementById('modal-item-ingredients').innerHTML = item.ingredients.map(ing => 
+        `<span class="px-2 py-1 rounded bg-brand-dark border border-neutral-800 text-[11px] text-neutral-300">${ing}</span>`
+      ).join('');
+
+      // Allergens
+      document.getElementById('modal-item-allergens').textContent = item.allergens.length > 0 ? item.allergens.join(', ') : 'None';
+
+      // Button Event
+      document.getElementById('modal-add-btn').onclick = () => {
+        addToCart(modalActiveItemId, modalActiveQty);
+        closeItemModal();
+      };
+
+      document.getElementById('item-modal').classList.remove('hidden');
+    }
+
+    function closeItemModal() {
+      document.getElementById('item-modal').classList.add('hidden');
+    }
+
+    function updateModalQty(delta) {
+      modalActiveQty = Math.max(1, modalActiveQty + delta);
+      document.getElementById('modal-item-qty').textContent = modalActiveQty;
+    }
+
+    // 3. CART & ORDER SYSTEM LOGIC
+    function quickAddCart(itemId) {
+      addToCart(itemId, 1);
+    }
+
+    function addToCart(itemId, qty = 1) {
+      const existing = cart.find(i => i.id === itemId);
+      if(existing) {
+        existing.qty += qty;
+      } else {
+        const item = RESTAURANT_CONFIG.menuItems.find(i => i.id === itemId);
+        if(item) {
+          cart.push({ ...item, qty });
+        }
+      }
+      updateCartUI();
+      showToast('Item added to demo order!');
+    }
+
+    function updateCartQty(itemId, delta) {
+      const index = cart.findIndex(i => i.id === itemId);
+      if(index > -1) {
+        cart[index].qty += delta;
+        if(cart[index].qty <= 0) cart.splice(index, 1);
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const container = document.getElementById('cart-items-container');
+      const emptyState = document.getElementById('cart-empty');
+      const footer = document.getElementById('cart-footer');
+      const countBadge = document.getElementById('cart-badge-count');
+
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+      if (totalItems > 0) {
+        countBadge.textContent = totalItems;
+        countBadge.classList.remove('hidden');
+      } else {
+        countBadge.classList.add('hidden');
+      }
+
+      if (cart.length === 0) {
+        container.classList.add('hidden');
+        footer.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.classList.remove('hidden');
+      footer.classList.remove('hidden');
+
+      container.innerHTML = cart.map(item => `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-brand-dark border border-neutral-800">
+          <div class="flex items-center gap-3">
+            <img src="${item.image}" alt="" class="w-12 h-12 rounded-lg object-cover">
+            <div>
+              <h4 class="text-xs font-bold text-white">${item.name}</h4>
+              <p class="text-xs text-brand-gold font-semibold">₹${item.price}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 border border-neutral-700 rounded-lg px-2 py-1">
+            <button onclick="updateCartQty(${item.id}, -1)" class="text-xs text-neutral-400 hover:text-white">-</button>
+            <span class="text-xs font-bold text-white px-1">${item.qty}</span>
+            <button onclick="updateCartQty(${item.id}, 1)" class="text-xs text-neutral-400 hover:text-white">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const tax = Math.round(subtotal * 0.10);
+      const total = subtotal + tax;
+
+      document.getElementById('cart-subtotal').textContent = `₹${subtotal}`;
+      document.getElementById('cart-tax').textContent = `₹${tax}`;
+      document.getElementById('cart-total').textContent = `₹${total}`;
+
+      lucide.createIcons();
+    }
+
+    function toggleCartDrawer() {
+      const drawer = document.getElementById('cart-drawer');
+      drawer.classList.toggle('translate-x-full');
+    }
+
+    function openCheckoutModal() {
+      toggleCartDrawer();
+      document.getElementById('checkout-modal').classList.remove('hidden');
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkout-modal').classList.add('hidden');
+      document.getElementById('checkout-form-wrapper').classList.remove('hidden');
+      document.getElementById('checkout-success').classList.add('hidden');
+    }
+
+    function handleDemoCheckoutSubmit(e) {
+      e.preventDefault();
+      cart = [];
+      updateCartUI();
+      document.getElementById('checkout-form-wrapper').classList.add('hidden');
+      document.getElementById('checkout-success').classList.remove('hidden');
+    }
+
+    // 4. OFFERS, GALLERY, REVIEWS, FAQS RENDERERS
+    function renderOffers() {
+      const container = document.getElementById('offers-grid');
+      container.innerHTML = RESTAURANT_CONFIG.offers.map(offer => `
+        <div class="p-6 rounded-2xl bg-brand-dark border border-neutral-800 hover:border-brand-gold/50 transition-all flex flex-col justify-between">
+          <div>
+            <span class="px-2.5 py-1 rounded bg-brand-gold/10 text-brand-gold text-[10px] font-bold uppercase tracking-wider block w-max mb-3">${offer.badge}</span>
+            <h3 class="text-xl font-serif font-bold text-white mb-2">${offer.title}</h3>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed mb-6">${offer.desc}</p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-neutral-800">
+            <span class="text-[11px] font-mono text-neutral-400">CODE: <strong class="text-white">${offer.code}</strong></span>
+            <a href="#reserve" class="text-xs text-brand-gold hover:underline font-semibold">Claim Offer &rarr;</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderGallery() {
+      const container = document.getElementById('gallery-grid');
+      container.innerHTML = RESTAURANT_CONFIG.gallery.map((img, idx) => `
+        <div onclick="openLightbox('${img.url}')" class="group relative h-64 rounded-2xl overflow-hidden cursor-pointer border border-neutral-800">
+          <img src="${img.url}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-xs font-semibold text-white">${img.title}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openLightbox(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox-modal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    function renderReview() {
+      const rev = RESTAURANT_CONFIG.reviews[currentReviewIndex];
+      const card = document.getElementById('review-card');
+      card.style.opacity = '0';
+      
+      setTimeout(() => {
+        card.innerHTML = `
+          <div class="flex justify-center gap-1 text-brand-gold mb-4">
+            ${'<i data-lucide="star" class="w-5 h-5 fill-brand-gold"></i>'.repeat(rev.rating)}
+          </div>
+          <p class="text-base sm:text-lg font-serif italic text-neutral-200 mb-6 font-light">"${rev.comment}"</p>
+          <div class="flex items-center justify-center gap-3">
+            <img src="${rev.image}" alt="${rev.name}" class="w-10 h-10 rounded-full object-cover border border-brand-gold/40">
+            <div class="text-left">
+              <h4 class="text-sm font-bold text-white">${rev.name}</h4>
+              <p class="text-[11px] text-neutral-400">${rev.role}</p>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+        card.style.opacity = '1';
+      }, 150);
+    }
+
+    function nextReview() {
+      currentReviewIndex = (currentReviewIndex + 1) % RESTAURANT_CONFIG.reviews.length;
+      renderReview();
+    }
+
+    function prevReview() {
+      currentReviewIndex = (currentReviewIndex - 1 + RESTAURANT_CONFIG.reviews.length) % RESTAURANT_CONFIG.reviews.length;
+      renderReview();
+    }
+
+    function renderFAQs() {
+      const container = document.getElementById('faq-accordion');
+      container.innerHTML = RESTAURANT_CONFIG.faqs.map((faq, idx) => `
+        <div class="rounded-xl bg-brand-surface border border-neutral-800 overflow-hidden">
+          <button onclick="toggleFAQ(${idx})" class="w-full text-left p-4 font-semibold text-sm text-white flex justify-between items-center gap-4">
+            <span>${faq.q}</span>
+            <i id="faq-icon-${idx}" data-lucide="chevron-down" class="w-4 h-4 text-brand-gold transition-transform"></i>
+          </button>
+          <div id="faq-ans-${idx}" class="hidden px-4 pb-4 text-xs text-neutral-400 font-light leading-relaxed">
+            ${faq.a}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleFAQ(idx) {
+      const ans = document.getElementById(`faq-ans-${idx}`);
+      const icon = document.getElementById(`faq-icon-${idx}`);
+      ans.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    }
+
+    // RESERVATION & HELPER UTILITIES
+    function handleReservationSubmit(e) {
+      e.preventDefault();
+      document.getElementById('reservation-form').classList.add('hidden');
+      document.getElementById('reservation-success').classList.remove('hidden');
+    }
+
+    function resetReservationForm() {
+      document.getElementById('reservation-form').reset();
+      document.getElementById('reservation-form').classList.remove('hidden');
+      document.getElementById('reservation-success').classList.add('hidden');
+    }
+
+    function openStoryModal() {
+      document.getElementById('story-modal').classList.remove('hidden');
+    }
+
+    function closeStoryModal() {
+      document.getElementById('story-modal').classList.add('hidden');
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = "bg-brand-gold text-black px-4 py-2.5 rounded-xl font-bold text-xs shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 flex items-center gap-2 pointer-events-auto";
+      toast.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> ${message}`;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.remove();
+      }, 2500);
+    }
+
+    function updateYear() {
+      document.getElementById('year-span').textContent = new Date().getFullYear();
+    }
+  </script>
+</body>
+</html>
